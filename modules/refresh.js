@@ -1,8 +1,13 @@
 var sockjs = require('sockjs');
 
-module.exports = function refresh (server, app) {
+module.exports = function refresh (server, app, quiet) {
 	//	Watch for ready value, or timeout
 	var maxWait = 30000,
+		print = function() {
+			if(!quiet) {
+				console.log.apply(console, arguments);
+			}
+		},
 		interTime = 50,
 		count = 0,
 		connections = [],
@@ -11,17 +16,17 @@ module.exports = function refresh (server, app) {
 				clearInterval(inter);
 				var refresher = sockjs.createServer({
 					log: function(){
-						//console.log(arguments);
+						//print(arguments);
 					}
 				});
 				refresher.on('connection', function(conn){
 					connections.push(conn);
-					console.log("Connected", connections.length);
+					print("Connected", connections.length);
 					conn.on('close', function(){
 						var i;
 						for(i = 0; i < connections.length; i += 1) {
 							if(connections[i] == conn) {
-								console.log('Remove connection', i);
+								print('Remove connection', i);
 								connections.splice(i, 1);
 							}
 						}

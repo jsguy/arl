@@ -2,13 +2,26 @@
 
 Automatically refresh styles when files are updated
 
-## Insttallation
+## Installation
 
 ```bash
 npm install autorefresh -g
 ```
 
 ## Usage
+
+```
+autorefresh -c [command] -p [port] [files...]
+```
+
+Where:
+
+* -c [command] is the command to execute when one of the [files] change
+* -p [port] (optional) is the port to run on, defaults to 2886
+* -q [boolean] (optional), if we want to be quiet and not output anything
+* [files] is a list of files or a glob pattern - just be sure to not match the files you generate, as this can cause an infinte loop
+
+### Example
 
 Note: this example is available in the `/example/less` folder
 
@@ -33,7 +46,14 @@ And where a LESS file (style.less) generates the style.css file like so:
 @color-main: #007;
 @color-button: lighten(@color-main, 20%);
 body { background: @color-main; text-align: center; }
-.but {color: contrast(@color-button); background: @color-button; padding: 1rem 3rem; border-radius: 20px; border: 4px solid #fff; font-size: 2rem; }
+.but {
+	color: contrast(@color-button);
+	background: @color-button;
+	padding: 1rem 3rem;
+	border-radius: 20px;
+	border: 4px solid #fff;
+	font-size: 2rem;
+}
 ```
 
 Using a compile.sh file to compile the LESS file like so:
@@ -45,10 +65,10 @@ lessc --source-map=style.less.map style.less>style.css
 You simply run this command:
 
 ```bash
-autorefresh ./compile.sh style.less
+autorefresh -c ./compile.sh style.less
 ```
 
-Now open `test01.htm`, then edit `style.less`, change the body background to "#0a0" and save - you should see the page instantly refresh the background style to a lovely green colour.
+Now open `test01.htm`, then edit `style.less`, change the @color-main to "#0a0" and save - you should see the page instantly refresh the background style to a lovely green colour.
 
 Note: by default autorefresh will refresh all style link tags - to disable that, pass "?specify=true" as a parameter to the refresh.js file, and add a `data-autorefresh="true` to the links you do want refreshed, eg:
 
