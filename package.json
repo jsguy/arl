@@ -1,0 +1,28 @@
+{
+  "name": "autorefresh",
+  "version": "0.0.1",
+  "description": "Automatically refresh styles when files are updated",
+  "main": "app.js",
+  "bin": {
+    "autorefresh": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsguy/autorefresh"
+  },
+  "bugs": {
+    "url": "https://github.com/jsguy/autorefresh/issues"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "jsguy (Mikkel Bergmann)",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "chokidar": "^1.2.0",
+    "express": "^4.13.3",
+    "less": "^2.5.3",
+    "sockjs": "^0.3.15"
+  }
+}
