@@ -1,7 +1,7 @@
 var sockjs = require('sockjs');
 
 module.exports = function refresh (server, app) {
-	//	Watch for misoready, init after a while if we somehow fail to get ready.
+	//	Watch for ready value, or timeout
 	var maxWait = 30000,
 		interTime = 50,
 		count = 0,
@@ -11,7 +11,6 @@ module.exports = function refresh (server, app) {
 				clearInterval(inter);
 				var refresher = sockjs.createServer({
 					log: function(){
-						//	TODO: disable debug messages
 						//console.log(arguments);
 					}
 				});

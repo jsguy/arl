@@ -98,38 +98,82 @@ getScrollTop = function(){
         D= (D.clientHeight)? D: B;
         return D.scrollTop;
     }
+},
+getParameters = function() {
+	//	This script
+	var myScript = document.getElementsByTagName('script'),
+		query,
+		params = {},
+		param,
+		pairs,
+		i;
+
+	myScript = myScript[myScript.length - 1];
+	query = myScript.src.replace(/^[^\?]+\??/,'');
+
+	if(query) {
+		pairs = query.split(/[;&]/);
+		for(i = 0; i < pairs.length; i += 1) {
+			param = pairs[i].split('=');
+			if(!param || param.length != 2){
+				continue;
+			}
+			params[unescape(param[0])] = unescape(param[1]).replace(/\+/g, ' ');
+		}
+	}
+	return params;
+},
+params = getParameters(),
+//	Check if the value is truthy
+isTruthy = function(value){
+	return typeof value !== undefined && value !== "false" && value !== false && value !== "0" && value !== 0 && value !== null && value !== undefined;
+},
+
+//	Refresh the style for a given link element
+refreshStyle = function(link){
+	if(link) {
+		var attr = link.getAttribute("data-autorefreshhref"),
+			url = attr? attr: link.getAttribute("href"),
+			newUrl = url + "?t=" + (new Date()).getTime();
+
+		link.setAttribute("data-autorefreshhref", url);
+		link.setAttribute("href", newUrl);
+	}
 };
+//	Refresh all styles
+refreshStyles = function(){
+	var allLinks = document.querySelectorAll('link'),
+		link,
+		attr,
+		i;
 
-//	Testing... using jquery for now.
-var refreshStyles = function(url){
-	url = url || "style.min.css";
-	var searchUrl = $('link[data-autorefreshhref="'+url+'"]').attr("href") || url,
-		newUrl = url + "?t=" + (new Date()).getTime();
-	
-	$('link[href="'+searchUrl+'"]')
-		.attr("data-autorefreshhref", url)
-		.attr("href", newUrl);
-
-	//	Forces a repaint
-	$('<style></style>').appendTo($(document.body)).remove();
-	//document.body.removeChild(document.body.appendChild(document.createElement('sty‌​le')));
+	for(i = 0; i < allLinks.length; i += 1) {
+		link = allLinks[i];
+		if(isTruthy(params.specify)) {
+			//	Only use if it has a data-autorefresh attribute
+			attr = isTruthy(link.getAttribute("data-autorefresh"));
+			if(attr) {
+				refreshStyle(link);
+			}
+		} else {
+			refreshStyle(link);
+		}
+	}
+	//	Force repaint
+	document.body.removeChild(document.body.appendChild(document.createElement('style')));
 };
-
 
 //	Reload when we can get a connection again
 (function () {
 
-	//var sockPath = window.location.origin + '/autorefresh';
-	var sockPath = 'http://localhost:2886/autorefresh';
-
-	console.log(sockPath);
-	
-	var sock = new SockJS(sockPath),
+	//	TODO: Ability to set this...
+	var sockPath = 'http://localhost:2886/autorefresh',
+		sock = new SockJS(sockPath),
 		newSock,
 		timeDelay = 100,
 		scrollY = cookie.get("reloadScroll"),
 		messageFunc = function(e){
-			refreshStyles("style.min.css");
+			refreshStyles();
 		},
 		closeFunc = function() {
 			//	Reconnect as soon as the socket is ready
@@ -150,13 +194,7 @@ var refreshStyles = function(url){
 		};
 
 		
-	//	When socket is closed, we set an interval to watch for 
-	//	socket open.
-	//	TODO: It would be nice to have a decaying delay, when there 
-	//	is a longer wait, for example: after 2 seconds, wait 400ms, 
-	//	after 5 seconds 1000ms, etc...
 	sock.onclose = closeFunc;
-
 	sock.onmessage = messageFunc;
 
 	//	Set the scroll offset

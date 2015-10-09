@@ -1,6 +1,6 @@
 {
   "name": "autorefresh",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Automatically refresh styles when files are updated",
   "main": "app.js",
   "bin": {
