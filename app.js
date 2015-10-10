@@ -14,12 +14,12 @@ var express = require('express'),
 	child,
 	watchfiles,
 	queuedEvents = {},
+	//	Print unless quiet
 	print = function() {
 		if(!options.q) {
 			console.log.apply(console, arguments);
 		}
 	},
-
 	// Ref: http://davidwalsh.name/javascript-debounce-function
 	debounce = function(func, wait, immediate) {
 		var timeout;
@@ -37,23 +37,19 @@ var express = require('express'),
 	},
 
 	runCommand = debounce(function(command, callback){
-
 		//	make the current directory where we're the script from
 		var cmdPath = path.parse(command),
 			cwd = path.resolve(cmdPath.dir),
 			base = cmdPath.base,
 			cmd = path.resolve(command);
 
-		//	Windows is a jerk sometimes... 
-		//	Escape backslashes and add quotes
+		//	Escape backslashes and add quotes for windows pathes
 		if (process.platform === 'win32' && cmd.indexOf(" ") !== -1) {
 			cmd = '"' + cmd.split("\\").join("\\\\") + '"';
 		}
 
 		child = exec(cmd,
-			{
-				cwd: cwd,
-			},
+			{cwd: cwd},
 			function (error, stdout, stderr) {
 				if (error !== null) {
 					print('exec error: ' + error);
@@ -68,7 +64,6 @@ var express = require('express'),
 			}
 		);
 	}, 100);
-
 
 //	We parse application/x-www-form-urlencoded and application/json
 //	Note: this also fixes issues with WS being closed too soon.
@@ -120,8 +115,7 @@ chokidar.watch(watchfiles, {ignored: /[\/\\]\./}).on('all', function(event, file
 			print(filePath, "changed");
 
 			runCommand(options.c, function(){
-				//	Need to be able to send a messge to the connected users.
-				//	
+				//	Send a messge to the connected users.
 				for(i = 0; i < connections.length; i += 1) {
 					connections[i].write(JSON.stringify({
 						url: filePath

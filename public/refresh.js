@@ -144,15 +144,13 @@ refreshStyle = function(link){
 refreshStyles = function(){
 	var allLinks = document.querySelectorAll('link'),
 		link,
-		attr,
 		i;
 
 	for(i = 0; i < allLinks.length; i += 1) {
 		link = allLinks[i];
 		if(isTruthy(params.specify)) {
 			//	Only use if it has a data-autorefresh attribute
-			attr = isTruthy(link.getAttribute("data-autorefresh"));
-			if(attr) {
+			if(isTruthy(link.getAttribute("data-autorefresh"))) {
 				refreshStyle(link);
 			}
 		} else {
@@ -161,6 +159,7 @@ refreshStyles = function(){
 	}
 	//	Force repaint
 	document.body.removeChild(document.body.appendChild(document.createElement('style')));
+    document.getElementsByTagName('body')[0].focus();
 };
 
 //	Reload when we can get a connection again
