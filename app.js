@@ -35,7 +35,7 @@ var express = require('express'),
 			if (callNow) func.apply(context, args);
 		};
 	},
-	debounceAmount = 100,
+
 	runCommand = debounce(function(command, callback){
 
 		//	make the current directory where we're the script from
@@ -43,6 +43,12 @@ var express = require('express'),
 			cwd = path.resolve(cmdPath.dir),
 			base = cmdPath.base,
 			cmd = path.resolve(command);
+
+		//	Windows is a jerk sometimes... 
+		//	Escape backslashes and add quotes
+		if (process.platform === 'win32' && cmd.indexOf(" ") !== -1) {
+			cmd = '"' + cmd.split("\\").join("\\\\") + '"';
+		}
 
 		child = exec(cmd,
 			{
@@ -61,7 +67,7 @@ var express = require('express'),
 				callback();
 			}
 		);
-	}, debounceAmount);
+	}, 100);
 
 
 //	We parse application/x-www-form-urlencoded and application/json
