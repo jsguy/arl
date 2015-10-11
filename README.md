@@ -27,7 +27,7 @@ Note: an example that uses `LESS` is available in the `/example` folder - be sur
 
 Say you have a HTML file (test01.htm) like so:
 
-```markup
+```html
 <html>
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<button class="but" type="button">Button</button>
@@ -36,7 +36,7 @@ Say you have a HTML file (test01.htm) like so:
 
 Add a script tag like so before the /html tag:
 
-```markup
+```html
 <script type="text/javascript" src="http://localhost:2886/refresh.js"></script>
 ```
 
@@ -84,7 +84,7 @@ Where
 * `socketurl` is the URL for the socket you want to connect to, eg: "socketurl=http%3A%2F%2Flocalhost%3A2886%2Fautorefresh"
 * `specify` is a boolean that allows you to specify which style tags are refreshed - by default we will refresh all style tags. Add a `data-autorefresh="true` to the links you do want refreshed, eg:
 
-```markup
+```html
 <html>
 	<link rel="stylesheet" type="text/css" href="base.css">
 	<link rel="stylesheet" type="text/css" data-autorefresh="true" href="style.css">
