@@ -23,7 +23,7 @@ Where:
 
 ### Example
 
-Note: this example is available in the `/example/less` folder
+Note: an example that uses `LESS` is available in the `/example` folder - be sure to install LESS: `npm install less -g` first.
 
 Say you have a HTML file (test01.htm) like so:
 
