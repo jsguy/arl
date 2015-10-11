@@ -37,7 +37,7 @@ Say you have a HTML file (test01.htm) like so:
 Add a script tag like so before the /html tag:
 
 ```html
-<script type="text/javascript" src="http://localhost:2886/refresh.js"></script>
+<script>document.write("<script src='//"+(location.host||"localhost").split(":")[0]+":2886/refresh.js'><"+"/script>");</script>
 ```
 
 And where a LESS file (style.less) generates the style.css file like so:
@@ -68,7 +68,7 @@ You simply run this command:
 autorefresh -c ./compile.sh style.less
 ```
 
-Now open `test01.htm`, then edit `style.less`, change the @color-main to "#0a0" and save - you should see the page instantly refresh the background style to a lovely green colour.
+Now open `test01.htm` in a browser, then edit `style.less` and change the @color-main to "#0a0" and save - you should see the page instantly refresh the background style to a lovely green colour.
 
 ## Parameters
 
@@ -95,3 +95,11 @@ Where
 
 Will only auto refresh the style.css file, and leave the base.css file alone.
 
+## Why?
+
+There are [quite](http://livereload.com/) a [few](http://livestyle.emmet.io/) [good](http://www.browsersync.io/) tools that do similar things to autorefresh, but I found that my use case wasn't easily implemented, or had issues such as timing and other compilation problems that just got in the way. The use case is this:
+
+* Using LESS with source maps
+* Integrating within an existing project using a particular IDE, though we want the solution to be independent from the IDE
+* Reloading the whole page can take a while, so want to just refresh the CSS
+* Minimal effort setup, allowing a compilation step

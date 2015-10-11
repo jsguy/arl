@@ -139,7 +139,10 @@ chokidar.watch(watchfiles).on('all', function(event, filePath) {
 //	Run the server
 var server = app.listen(options.p, function () {
 	connections = refresh(server, app, options.q);
-	print("Autorefresh listening on:", options.p);
+	print("Autorefresh listening on: %s, be sure to add a script tag into your page like so:", options.p);
+	print("");
+	print("	<script>document.write(\"<script src='//\"+(location.host||\"localhost\").split(\":\")[0]+\":"+options.p+"/refresh.js'><\"+\"/script>\");</script>");
+	print("");
 	app.set("AUTOREFRESHREADY", true);
 });
 
