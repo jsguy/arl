@@ -61,7 +61,14 @@ var express = require('express'),
 				if(stderr) {
 					print('stderr: ' + stderr);
 				}
-				callback();
+				if(options.d) {
+					print("wait %s ms", options.d);
+					setTimeout(function(){
+						callback();
+					}, options.d)
+				} else {
+					callback();
+				}
 			}
 		);
 	}, 100);
@@ -94,6 +101,7 @@ if(!watchfiles.length) {
 	console.log("Where:");
 	console.log("	-c [command] is the command to execute when one of the [files] change");
 	console.log("	-p [port] (optional) is the port to run on, defaults to 2886");
+	console.log("	-d [delay] is the time in milliseconds to wait before notifying the client that a command has finished");
 	console.log("	-q [boolean] (optional), if we want to be quiet and not output anything");
 	console.log();
 	console.log("For example:");

@@ -217,7 +217,4 @@ THE SOFTWARE.
 	window.onscroll = function(){
 		cookie.set("reloadScroll", getScrollTop());
 	};
-
-
-
 }());
