@@ -81,6 +81,7 @@ app.use(function(req, res, next) {
 app.use(express.static(path.join(__dirname, '/public')));
 
 options = parseArgs(process.argv.slice(2));
+options.p = options.p || defaultPort;
 
 command = process.argv[2];
 watchfiles = options._;
@@ -107,8 +108,6 @@ if(!watchfiles.length) {
 	console.log();
 	process.exit(1);
 }
-
-options.p = options.p || defaultPort;
 
 //	Grab arguments
 chokidar.watch(watchfiles).on('all', function(event, filePath) {
