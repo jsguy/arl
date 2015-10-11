@@ -4,6 +4,7 @@ var express = require('express'),
 	path = require('path'),
 	refresh = require('./modules/refresh'),
 	chokidar = require('chokidar'),
+	pjson = require('./package.json'),
 	exec = require('child_process').exec,
 	parseArgs = require('minimist'),
 	options,
@@ -85,7 +86,7 @@ command = process.argv[2];
 watchfiles = options._;
 
 if(!watchfiles.length) {
-	console.log("Autorefresh usage:");
+	console.log("Autorefresh v"+pjson.version+" usage:");
 	console.log();
 	console.log("	autorefresh -c [command] -p [port] [files]");
 	console.log();
@@ -96,9 +97,13 @@ if(!watchfiles.length) {
 	console.log();
 	console.log("For example:");
 	console.log();
-	console.log("	autorefresh ./compile.sh style.less");
+	console.log("	autorefresh -c compile.sh style.less");
 	console.log();
 	console.log("Will run the ./compile.sh file every time style.less changes, and then refresh all styles in files that include refresh.js");
+	console.log();
+	console.log("Be sure to add a script tag in your page like so:");
+	console.log();
+	console.log("	<script>document.write(\"<script src='//\"+(location.host||\"localhost\").split(\":\")[0]+\":"+options.p+"/refresh.js'><\"+\"/script>\");</script>");
 	console.log();
 	process.exit(1);
 }
@@ -139,10 +144,7 @@ chokidar.watch(watchfiles).on('all', function(event, filePath) {
 //	Run the server
 var server = app.listen(options.p, function () {
 	connections = refresh(server, app, options.q);
-	print("Autorefresh listening on: %s, be sure to add a script tag into your page like so:", options.p);
-	print("");
-	print("	<script>document.write(\"<script src='//\"+(location.host||\"localhost\").split(\":\")[0]+\":"+options.p+"/refresh.js'><\"+\"/script>\");</script>");
-	print("");
+	print("Autorefresh v"+pjson.version+" listening on: %s", options.p);
 	app.set("AUTOREFRESHREADY", true);
 });
 
