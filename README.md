@@ -1,6 +1,6 @@
 # Autorefresh
 
-Automatically refresh styles when files are updated
+Automatically refresh styles when files are updated - allowing you to optionally execute a compile step.
 
 ## Installation
 
@@ -70,12 +70,28 @@ autorefresh -c ./compile.sh style.less
 
 Now open `test01.htm`, then edit `style.less`, change the @color-main to "#0a0" and save - you should see the page instantly refresh the background style to a lovely green colour.
 
-Note: by default autorefresh will refresh all style link tags - to disable that, pass "?specify=true" as a parameter to the refresh.js file, and add a `data-autorefresh="true` to the links you do want refreshed, eg:
+## Parameters
+
+Note: you can add the following parameters to the refresh script:
+
+```
+socketurl=[socketurl]
+specify=[boolean]
+```
+
+Where
+
+* `socketurl` is the URL for the socket you want to connect to, eg: "socketurl=http%3A%2F%2Flocalhost%3A2886%2Fautorefresh"
+* `specify` is a boolean that allows you to specify which style tags are refreshed - by default we will refresh all style tags. Add a `data-autorefresh="true` to the links you do want refreshed, eg:
 
 ```markup
 <html>
+	<link rel="stylesheet" type="text/css" href="base.css">
 	<link rel="stylesheet" type="text/css" data-autorefresh="true" href="style.css">
 	<button class="but" type="button">Button</button>
 	<script type="text/javascript" src="http://localhost:2886/refresh.js?specify=true"></script>
 </html>
 ```
+
+Will only auto refresh the style.css file, and leave the base.css file alone.
+

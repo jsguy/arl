@@ -1,9 +1,10 @@
 @color-main: #007;
 @color-button: lighten(@color-main, 20%);
-body { background: @color-main; text-align: center; }
+@color-text: contrast(@color-button);
+body { background: @color-main; color: @color-text; font-family: sans-serif }
 .but {
-	color: contrast(@color-button);
 	background: @color-button;
+	color: @color-text;
 	padding: 1rem 3rem;
 	border-radius: 20px;
 	border: 4px solid #fff;

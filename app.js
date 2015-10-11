@@ -84,7 +84,7 @@ options = parseArgs(process.argv.slice(2));
 command = process.argv[2];
 watchfiles = options._;
 
-if(!options.c || !watchfiles.length) {
+if(!watchfiles.length) {
 	console.log("Autorefresh usage:");
 	console.log();
 	console.log("	autorefresh -c [command] -p [port] [files]");
@@ -105,24 +105,33 @@ if(!options.c || !watchfiles.length) {
 
 options.p = options.p || defaultPort;
 
-//	Grab arguments, ignores .dotfiles
-chokidar.watch(watchfiles, {ignored: /[\/\\]\./}).on('all', function(event, filePath) {
-	var i, hasPath;
+//	Grab arguments
+chokidar.watch(watchfiles).on('all', function(event, filePath) {
+	var i,
+		hasPath,
+		sendMessage = function(filePath){
+			//	Send a messge to the connected users.
+			for(i = 0; i < connections.length; i += 1) {
+				connections[i].write(JSON.stringify({
+					url: filePath
+				}));
+			}
+		};
 	if(event == "change") {
 		if(!queuedEvents[filePath]) {
 			queuedEvents[filePath] = filePath;
 
 			print(filePath, "changed");
 
-			runCommand(options.c, function(){
-				//	Send a messge to the connected users.
-				for(i = 0; i < connections.length; i += 1) {
-					connections[i].write(JSON.stringify({
-						url: filePath
-					}));
-				}
+			if(options.c) {
+				runCommand(options.c, function(){
+					sendMessage(filePath);
+					delete queuedEvents[filePath];
+				});
+			} else {
+				sendMessage(filePath);
 				delete queuedEvents[filePath];
-			});
+			}
 		}
 	}
 });

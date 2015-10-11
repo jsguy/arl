@@ -99,17 +99,25 @@ getScrollTop = function(){
         return D.scrollTop;
     }
 },
-getParameters = function() {
+getScriptInfo = function() {
 	//	This script
 	var myScript = document.getElementsByTagName('script'),
 		query,
 		params = {},
+		scriptInfo = {},
 		param,
 		pairs,
 		i;
 
 	myScript = myScript[myScript.length - 1];
 	query = myScript.src.replace(/^[^\?]+\??/,'');
+
+	scriptInfo.src = myScript.src;
+	scriptInfo.file = myScript.src.split("/");
+	scriptInfo.file = scriptInfo.file[scriptInfo.file.length -1];
+	scriptInfo.base = myScript.src.split("/");
+	scriptInfo.base.splice(scriptInfo.base.length -1, 1);
+	scriptInfo.base = scriptInfo.base.join("/");
 
 	if(query) {
 		pairs = query.split(/[;&]/);
@@ -121,9 +129,12 @@ getParameters = function() {
 			params[unescape(param[0])] = unescape(param[1]).replace(/\+/g, ' ');
 		}
 	}
-	return params;
+	return {
+		parameters: params,
+		info: scriptInfo
+	};
 },
-params = getParameters(),
+scriptInfo = getScriptInfo(),
 //	Check if the value is truthy
 isTruthy = function(value){
 	return typeof value !== undefined && value !== "false" && value !== false && value !== "0" && value !== 0 && value !== null && value !== undefined;
@@ -148,7 +159,7 @@ refreshStyles = function(){
 
 	for(i = 0; i < allLinks.length; i += 1) {
 		link = allLinks[i];
-		if(isTruthy(params.specify)) {
+		if(isTruthy(scriptInfo.parameters.specify)) {
 			//	Only use if it has a data-autorefresh attribute
 			if(isTruthy(link.getAttribute("data-autorefresh"))) {
 				refreshStyle(link);
@@ -166,7 +177,7 @@ refreshStyles = function(){
 (function () {
 
 	//	TODO: Ability to set this...
-	var sockPath = 'http://localhost:2886/autorefresh',
+	var sockPath = scriptInfo.parameters.socketurl || scriptInfo.info.base + "/autorefresh",
 		sock = new SockJS(sockPath),
 		newSock,
 		timeDelay = 100,
@@ -192,7 +203,6 @@ refreshStyles = function(){
 			}, timeDelay);
 		};
 
-		
 	sock.onclose = closeFunc;
 	sock.onmessage = messageFunc;
 
