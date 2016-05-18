@@ -102,7 +102,10 @@ THE SOFTWARE.
 	},
 	getScriptInfo = function() {
 		//	This script
-		var myScript = document.getElementsByTagName('script'),
+		var myScript = document.currentScript || (function() {
+				var scripts = document.getElementsByTagName("script");
+				return scripts[scripts.length - 1];
+			})(),
 			query,
 			params = {},
 			scriptInfo = {},
@@ -110,7 +113,6 @@ THE SOFTWARE.
 			pairs,
 			i;
 
-		myScript = myScript[myScript.length - 1];
 		query = myScript.src.replace(/^[^\?]+\??/,'');
 
 		scriptInfo.src = myScript.src;
